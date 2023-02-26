@@ -1,47 +1,42 @@
-import React, { useCallback, useContext } from "react";
-import { Navigate } from "react-router";
-import app from "./firebase.js";
-import { AuthContext } from "./Auth.js";
-
-export const  Login = ({ history }) => {
-  const handleLogin = useCallback(
-    async event => {
-      event.preventDefault();
-      const { email, password } = event.target.elements;
-      try {
-        await app
-          .auth()
-          .signInWithEmailAndPassword(email.value, password.value);
-        history.push("/");
-      } catch (error) {
-        alert(error);
-      }
-    },
-    [history]
-  );
-
-  const { user } = useContext(AuthContext);
-
-  if (user) {
-    return <Navigate to="/" />;
-  }
-
+import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth } from "./Firebase";
+function Login() {
+    const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();  
+  const signIn = (e) => {
+        e.preventDefault();
+        signInWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            console.log(userCredential);
+            navigate("/")
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
   return (
-    <div>
-      <h1>Log in</h1>
-      <form onSubmit={handleLogin}>
-        <label>
-          Email
-          <input name="email" type="email" placeholder="Email" />
-        </label>
-        <label>
-          Password
-          <input name="password" type="password" placeholder="Password" />
-        </label>
-        <button type="submit">Log in</button>
+    <div className="sign-in-container">
+      <form onSubmit={signIn}>
+        <h1>Log In to your Account</h1>
+        <input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        ></input>
+        <input
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        ></input>
+        <button type="submit">Log In</button>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

@@ -1,14 +1,10 @@
-import { app} from "./firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
-import React ,{ useEffect, useState } from "react";
-export const AuthContext = React.createContext();
+import app from './Firebase';
+import React,{ useState,useEffect } from 'react';
 
-export const Auth = ({Children}) => {
+export const AuthContext =React.createContext();
+function Auth() {
     const [currentUser,setCurrentUser] = useState(null)
+    
     useEffect(()=>{
         app.auth().onAuthStateChanged(()=>{
             setCurrentUser(currentUser)
@@ -18,8 +14,7 @@ export const Auth = ({Children}) => {
     <AuthContext.Provider value={{currentUser}}>
         {Children}
     </AuthContext.Provider>
-    
-  );
-};
+  )
+}
 
-export default Auth;
+export default Auth
